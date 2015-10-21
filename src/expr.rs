@@ -435,7 +435,7 @@ impl Rewrite for ast::Block {
                 let trimmed = &snippet[6..open_pos].trim();
 
                 let prefix = if !trimmed.is_empty() {
-                    // 9 = "unsafe  {".len(), 7 = "unsafe ".len()
+                    // 9 = "unsafe {".len(), 7 = "unsafe ".len()
                     let budget = try_opt!(width.checked_sub(9));
                     format!("unsafe {} ",
                             try_opt!(rewrite_comment(trimmed,

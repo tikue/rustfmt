@@ -50,8 +50,8 @@ enum X {
     CreateWebGLPaintTask(Size2D<i32>,
                          GLContextAttributes,
                          IpcSender<Result<(IpcSender<CanvasMsg>, usize), String>>), /* This is
-                                                                                     * a post c
-                                                                                     * omment */
+                                                                                     * a post
+                                                                                     * comment */
 }
 
 pub enum EnumWithAttributes {
@@ -67,8 +67,9 @@ pub enum EnumWithAttributes {
     ItemStruct {
         x: usize,
         y: usize,
-    }, /* Comment AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        * AAAAAAAAAAAAAAAAAAA */
+    }, /* Comment
+        * AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        * AAAAAAAAAAA */
     // And another
     ForcedPreflight, /* AAAAAAAAAAAAAAA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
                       * AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA */
@@ -132,7 +133,7 @@ fn nested_enum_test() {
                 usize,
                 usize), /* AAAAAAAAAAAAAAA AAAAAAAAAAAAAAAAAAAAA AAAAAAAAAAAAAAAAAAAAAAAAAAA
                          * AAAAAAAAAAAAAAAAAAAAAA */
-            Two, /* AAAAAAAAAAAAAAAAAA  AAAAAAAAAAAAAAAAAAAAAA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            Two, /* AAAAAAAAAAAAAAAAAA AAAAAAAAAAAAAAAAAAAAAA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
                   * AAAAAAAAAAAAAAAAAA */
         }
         enum TestNestedFormatFail {

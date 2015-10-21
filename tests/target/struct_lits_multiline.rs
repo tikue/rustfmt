@@ -48,8 +48,8 @@ fn main() {
 
     A {
         // Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit
-        // amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante
-        // hendrerit. Donec et mollis dolor.
+        // amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit.
+        // Donec et mollis dolor.
         first: item(),
         // Praesent et diam eget libero egestas mattis sit amet vitae augue.
         // Nam tincidunt congue enim, ut porta lorem lacinia consectetur.
@@ -64,11 +64,11 @@ fn main() {
     }));
 
     Diagram {
-        //                 o        This graph demonstrates how
-        //                / \       significant whitespace is
-        //               o   o      preserved.
-        //              /|\   \
-        //             o o o   o
+        //                 o This graph demonstrates how
+        //                / \ significant whitespace is
+        //               o o no longer preserved.
+        //              /|\ \
+        //             o o o o
         graph: G,
     }
 }

@@ -51,7 +51,7 @@ pub fn rewrite_comment(orig: &str,
     let indent_str = offset.to_string(config);
     let line_breaks = s.chars().filter(|&c| c == '\n').count();
 
-    let lines = s.lines()
+    let mut words = s.lines()
                  .enumerate()
                  .map(|(i, mut line)| {
                      line = line.trim();
@@ -69,30 +69,77 @@ pub fn rewrite_comment(orig: &str,
                      } else {
                          line
                      }
-                 });
+                 })
+                 .flat_map(str::split_whitespace);
 
     let mut result = opener.to_owned();
-    let mut first = true;
+    let mut space_left = max_chars;
 
-    for line in lines {
-        if !first {
+    if let Some(first) = words.next() {
+        if first.len() <= space_left {
+            result.push_str(first);
+            space_left -= first.len();
+        } else {
+            // If the first word is longer than the space allotted,
+            // then we need to rewrite the word.
+            let rewrite = try_opt!(rewrite_string(first, &fmt));
+            let mut words = rewrite.lines();
+            if let Some(first) = words.next() {
+                result.push_str(first);
+                space_left -= first.len();
+            }
+            for word in words.map(|w| w.split_whitespace().last().unwrap()) {
+                result.push('\n');
+                result.push_str(&indent_str);
+                result.push_str(line_start);
+                result.push_str(word);
+                space_left = max_chars - word.len();
+            }
+        }
+    }
+
+    for word in words {
+        if word.len() < space_left {
+            result.push(' ');
+            result.push_str(word);
+            space_left -= word.len() + 1;
+            continue;
+        }
+
+        // First check if the word is too big for even
+        // an empty line. If so, then we need to rewrite
+        // the word. Otherwise, just add a newline, etc.,
+        // and proceed.
+        if word.len() > max_chars {
+            let rewrite = try_opt!(rewrite_string(word, &fmt));
+            let mut words = rewrite.lines();
+            if let Some(first) = words.next() {
+                if first.len() >= space_left {
+                    result.push('\n');
+                    result.push_str(&indent_str);
+                    result.push_str(line_start);
+                    space_left = max_chars;
+                } else {
+                    result.push(' ');
+                    space_left -= 1;
+                }
+                result.push_str(first);
+                space_left -= first.len();
+            }
+            for word in words.map(|w| w.split_whitespace().last().unwrap()) {
+                result.push('\n');
+                result.push_str(&indent_str);
+                result.push_str(line_start);
+                result.push_str(word);
+                space_left = max_chars - word.len();;
+            }
+        } else {
             result.push('\n');
             result.push_str(&indent_str);
             result.push_str(line_start);
+            result.push_str(word);
+            space_left = max_chars - word.len();
         }
-
-        if line.len() > max_chars {
-            let rewrite = try_opt!(rewrite_string(line, &fmt));
-            result.push_str(&rewrite);
-        } else {
-            if line.len() == 0 {
-                // Remove space if this is an empty comment or a doc comment.
-                result.pop();
-            }
-            result.push_str(line);
-        }
-
-        first = false;
     }
 
     result.push_str(closer);
@@ -147,7 +194,7 @@ impl FindUncommented for str {
 // Returns the first byte position after the first comment. The given string
 // is expected to be prefixed by a comment, including delimiters.
 // Good: "/* /* inner */ outer */ code();"
-// Bad:  "code(); // hello\n world!"
+// Bad: "code(); // hello\n world!"
 pub fn find_comment_end(s: &str) -> Option<usize> {
     let mut iter = CharClasses::new(s.char_indices());
     for (kind, (i, _c)) in &mut iter {
@@ -445,7 +492,7 @@ mod test {
         assert_eq!("// comment\n// on a", rewrite_comment("// comment on a", false, 10,
                                                           Indent::empty(), &config).unwrap());
 
-        assert_eq!("//  A multi line comment\n            // between args.",
+        assert_eq!("// A multi line comment between args.",
                    rewrite_comment("//  A multi line comment\n             // between args.",
                                    false,
                                    60,

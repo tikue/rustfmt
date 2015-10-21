@@ -34,7 +34,7 @@ fn main() {
 
     Diagram { /*                 o        This graph demonstrates how                  
                *                / \       significant whitespace is           
-               *               o   o      preserved.  
+               *               o   o      no longer preserved.  
                *              /|\   \
                *             o o o   o */
               graph: G, }
